@@ -73,6 +73,24 @@ export const Global = () => {
           margin: 0;
           border-top: 1px solid ${theme.colors.gray6};
         }
+
+        .notion-simple-table {
+          border: 1px solid var(--fg-color-5);
+          border-collapse: collapse;
+          border-spacing: 0;
+          font-size: 14px;
+
+          display: block;
+          width: 100%;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .notion-simple-table table {
+          width: max-content;
+          min-width: 100%;
+        }
       `}
     />
   )

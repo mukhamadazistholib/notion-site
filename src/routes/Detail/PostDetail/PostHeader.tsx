@@ -94,6 +94,12 @@ const PostHeader: React.FC<Props> = ({ data }) => {
 
       <StyledHr />
 
+      {data.summary && (
+        <StyleSummary>
+          <p>{data.summary}</p>
+        </StyleSummary>
+      )}
+
       {data.thumbnail && (
         <>
           <StyledThumbnail
@@ -192,6 +198,20 @@ const StyledHr = styled.hr`
   width: 100%;
   border: 0;
   border-top: 1px solid ${({ theme }) => theme.colors.gray10};
+`
+
+const StyleSummary = styled.div`
+  margin-bottom: 1rem;
+  font-style: italic;
+  p {
+    display: none;
+    line-height: 1.5rem;
+    color: ${({ theme }) => theme.colors.gray11};
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
 `
 
 const StyledThumbnail = styled.div`

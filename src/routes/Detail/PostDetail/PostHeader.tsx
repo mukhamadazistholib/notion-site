@@ -204,13 +204,9 @@ const StyleSummary = styled.div`
   margin-bottom: 1rem;
   font-style: italic;
   p {
-    display: none;
+    display: block;
     line-height: 1.5rem;
     color: ${({ theme }) => theme.colors.gray11};
-
-    @media (min-width: 768px) {
-      display: block;
-    }
   }
 `
 

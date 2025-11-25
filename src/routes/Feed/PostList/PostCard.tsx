@@ -147,13 +147,9 @@ const StyledWrapper = styled(Link)`
       > .summary {
         margin-bottom: 1rem;
         p {
-          display: none;
-          line-height: 2rem;
+          display: block;
+          line-height: 1.5rem;
           color: ${({ theme }) => theme.colors.gray11};
-
-          @media (min-width: 768px) {
-            display: block;
-          }
         }
       }
       > .tags {

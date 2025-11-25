@@ -18,8 +18,8 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "breathewithin.space",
-    description: "Welcome to breathewithin.space!",
+    title: "Breathe Within Space",
+    description: "Welcome to Breathe Within Space!",
     scheme: "dark", // 'light' | 'dark' | 'system'
   },
 

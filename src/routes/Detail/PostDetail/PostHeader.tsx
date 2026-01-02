@@ -50,13 +50,6 @@ const PostHeader: React.FC<Props> = ({ data }) => {
     }
   }, [isPreviewOpen])
 
-  console.log("DATA", data.createdTime)
-  console.log("DATA", data.date.start_date)
-  console.log("RAW:", data.createdTime)
-console.log("PARSED:", new Date(data.createdTime).toISOString())
-
-
-
   return (
     <StyledWrapper>
       <h1 className="title">{data.title}</h1>

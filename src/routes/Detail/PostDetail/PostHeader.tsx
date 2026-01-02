@@ -1,7 +1,7 @@
 import { CONFIG } from "site.config"
 import Tag from "src/components/Tag"
 import { TPost } from "src/types"
-import { formatDate } from "src/libs/utils"
+import { formatDateTime } from "src/libs/utils"
 import Image from "next/image"
 import React, { useState, useEffect, KeyboardEvent, MouseEvent } from "react"
 import styled from "@emotion/styled"
@@ -50,6 +50,13 @@ const PostHeader: React.FC<Props> = ({ data }) => {
     }
   }, [isPreviewOpen])
 
+  console.log("DATA", data.createdTime)
+  console.log("DATA", data.date.start_date)
+  console.log("RAW:", data.createdTime)
+console.log("PARSED:", new Date(data.createdTime).toISOString())
+
+
+
   return (
     <StyledWrapper>
       <h1 className="title">{data.title}</h1>
@@ -70,10 +77,7 @@ const PostHeader: React.FC<Props> = ({ data }) => {
                 <div>
                   <div>{data.author[0].name}</div>
                   <div className="date">
-                    {formatDate(
-                      data?.date?.start_date || data.createdTime,
-                      CONFIG.lang
-                    )}
+                    {formatDateTime(data.createdTime, CONFIG.lang)}
                   </div>
                 </div>
               </div>

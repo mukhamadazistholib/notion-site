@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { CONFIG } from "site.config"
-import { formatDate } from "src/libs/utils"
+import { formatDateTime } from "src/libs/utils"
 import Tag from "../../../components/Tag"
 import { TPost } from "../../../types"
 import Image from "next/image"
@@ -12,7 +12,7 @@ type Props = {
 }
 
 const PostCard: React.FC<Props> = ({ data }) => {
-  const category = (data.category && data.category?.[0]) || undefined
+  const category = (data.category?.[0]) || undefined
 
   return (
     <StyledWrapper href={`/${data.slug}`}>
@@ -38,18 +38,14 @@ const PostCard: React.FC<Props> = ({ data }) => {
           </header>
           <div className="date">
             <div className="content">
-              {formatDate(
-                data?.date?.start_date || data.createdTime,
-                CONFIG.lang
-              )}
+              {formatDateTime(data.createdTime, CONFIG.lang)}
             </div>
           </div>
           <div className="summary">
             <p>{data.summary}</p>
           </div>
           <div className="tags">
-            {data.tags &&
-              data.tags.map((tag: string, idx: number) => (
+            {data.tags?.map((tag: string, idx: number) => (
                 <Tag key={idx}>{tag}</Tag>
               ))}
           </div>

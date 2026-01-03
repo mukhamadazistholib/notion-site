@@ -2,7 +2,7 @@ const CONFIG = {
   // profile setting (required)
   profile: {
     name: "A-Z",
-    image: "/avatar.svg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
+    image: "/avatar.png", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "The Curator of Soft Feelings",
     bio: "I don’t write to be heard. I write to finally breathe.",
     email: "mukhamadazistholib278@gmail.com",
@@ -12,8 +12,8 @@ const CONFIG = {
   },
   projects: [
     {
-      name: ``,
-      href: "",
+      name: `Breathe Within Space`,
+      href: "/",
     },
   ],
   // blog setting (required)

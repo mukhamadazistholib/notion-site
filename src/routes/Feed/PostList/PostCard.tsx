@@ -12,7 +12,7 @@ type Props = {
 }
 
 const PostCard: React.FC<Props> = ({ data }) => {
-  const category = (data.category?.[0]) || undefined
+  const category = data.category?.[0] || undefined
 
   return (
     <StyledWrapper href={`/${data.slug}`}>
@@ -32,7 +32,11 @@ const PostCard: React.FC<Props> = ({ data }) => {
             />
           </div>
         )}
-        <div data-thumb={!!data.thumbnail} data-category={!!category} className="content">
+        <div
+          data-thumb={!!data.thumbnail}
+          data-category={!!category}
+          className="content"
+        >
           <header className="top">
             <h2>{data.title}</h2>
           </header>
@@ -46,8 +50,8 @@ const PostCard: React.FC<Props> = ({ data }) => {
           </div>
           <div className="tags">
             {data.tags?.map((tag: string, idx: number) => (
-                <Tag key={idx}>{tag}</Tag>
-              ))}
+              <Tag key={idx}>{tag}</Tag>
+            ))}
           </div>
         </div>
       </article>
@@ -113,8 +117,7 @@ const StyledWrapper = styled(Link)`
           align-items: baseline;
         }
         h2 {
-          margin-bottom: 0.5rem;
-          font-size: 1.125rem;
+          font-size: 1.25rem;
           line-height: 1.75rem;
           font-weight: 500;
 

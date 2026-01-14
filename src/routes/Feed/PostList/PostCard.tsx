@@ -46,7 +46,11 @@ const PostCard: React.FC<Props> = ({ data }) => {
             </div>
           </div>
           <div className="summary">
-            <p>{data.summary}</p>
+            <p>
+              {(data.summary ?? "").length > 150
+                ? `${data.summary?.substring(0, 150)}...`
+                : data.summary}
+            </p>
           </div>
           <div className="tags">
             {data.tags?.map((tag: string, idx: number) => (

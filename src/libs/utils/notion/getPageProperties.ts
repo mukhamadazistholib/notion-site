@@ -27,9 +27,9 @@ async function getPageProperties(
           try {
             const url: string = val[0][1][0][1]
             const newurl = customMapImageUrl(url, blockValue)
-            properties[schema[key].name] = newurl
+            properties[schema[key].name] = newurl ?? null
           } catch (error) {
-            properties[schema[key].name] = undefined
+            properties[schema[key].name] = null
           }
           break
         }
@@ -64,12 +64,15 @@ async function getPageProperties(
               const resValue =
                 res?.recordMapWithRoles?.notion_user?.[userId[1]]?.value
               const user = {
-                id: resValue?.id,
+                id: resValue?.id ?? null,
                 name:
                   resValue?.name ||
-                  `${resValue?.family_name}${resValue?.given_name}` ||
-                  undefined,
-                profile_photo: resValue?.profile_photo || null,
+                  (resValue?.family_name || resValue?.given_name
+                    ? `${resValue?.family_name ?? ""}${
+                        resValue?.given_name ?? ""
+                      }`
+                    : null),
+                profile_photo: resValue?.profile_photo ?? null,
               }
               users.push(user)
             }

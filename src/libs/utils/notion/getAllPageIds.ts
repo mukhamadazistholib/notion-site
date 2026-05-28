@@ -13,6 +13,9 @@ export default function getAllPageIds(
   if (views?.value) {
     views = views.value
   }
+  if (!views || typeof views !== "object") {
+    return []
+  }
 
   let pageIds: ID[] = []
   if (viewId) {
@@ -21,6 +24,9 @@ export default function getAllPageIds(
   } else {
     const pageSet = new Set<ID>()
     Object.values(views).forEach((view: any) => {
+      // Non-grouped view (gallery, table, list): blockIds sits directly on the view
+      view?.blockIds?.forEach((id: ID) => pageSet.add(id))
+      // Grouped view: blockIds is nested under collection_group_results
       view?.collection_group_results?.blockIds?.forEach((id: ID) =>
         pageSet.add(id)
       )

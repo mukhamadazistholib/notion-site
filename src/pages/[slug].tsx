@@ -17,20 +17,25 @@ const filter: FilterPostsOptions = {
   acceptType: ["Paper", "Post", "Page"],
 }
 
-export const getStaticPaths = async () => {
-  const posts = await getPosts()
-  const filteredPost = filterPosts(posts, filter)
+// Module-level cache so getPosts() is called only once per build,
+// not once per slug (which causes 429 rate limit errors)
+let cachedPosts: any = null
+const getCachedPosts = async () => {
+  if (!cachedPosts) cachedPosts = await getPosts()
+  return cachedPosts
+}
 
+export const getStaticPaths = async () => {
   return {
-    paths: filteredPost.map((row) => `/${row.slug}`),
-    fallback: true,
+    paths: [],
+    fallback: "blocking",
   }
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const slug = context.params?.slug
 
-  const posts = await getPosts()
+  const posts = await getCachedPosts()
   const feedPosts = filterPosts(posts)
   await queryClient.prefetchQuery(queryKey.posts(), () => feedPosts)
 
@@ -68,7 +73,7 @@ const DetailPage: NextPageWithLayout = () => {
     date: new Date(date).toISOString(),
     image: image,
     description: post.summary || "",
-    type: post.type?.[0] ?? "",
+    type: post.type[0],
     url: `${CONFIG.link}/${post.slug}`,
   }
 

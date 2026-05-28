@@ -53,18 +53,27 @@ export const getPosts = async () => {
     const pageIds = getAllPageIds(response)
 
     // response.block only contains the root page — fetch each post's block so
-    // getPageProperties can read its properties
+    // getPageProperties can read its properties.
+    // Use batched requests to avoid hitting Notion's rate limit (429).
     const fetchedBlocks: any = { ...block }
-    await Promise.all(
-      pageIds.map(async (pageId) => {
-        try {
-          const pageResponse = await api.getPage(pageId)
-          Object.assign(fetchedBlocks, pageResponse.block)
-        } catch {
-          // skip inaccessible pages
-        }
-      })
-    )
+    const BATCH_SIZE = 5
+    const BATCH_DELAY_MS = 1000
+    for (let i = 0; i < pageIds.length; i += BATCH_SIZE) {
+      const batch = pageIds.slice(i, i + BATCH_SIZE)
+      await Promise.all(
+        batch.map(async (pageId) => {
+          try {
+            const pageResponse = await api.getPage(pageId)
+            Object.assign(fetchedBlocks, pageResponse.block)
+          } catch {
+            // skip inaccessible pages
+          }
+        })
+      )
+      if (i + BATCH_SIZE < pageIds.length) {
+        await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS))
+      }
+    }
 
     const data = []
     for (let i = 0; i < pageIds.length; i++) {

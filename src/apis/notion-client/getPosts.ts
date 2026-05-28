@@ -10,14 +10,15 @@ import { TPosts } from "src/types"
  * @param {{ includePages: boolean }} - false: posts only / true: include pages
  */
 
-// TODO: react query를 사용해서 처음 불러온 뒤로는 해당데이터만 사용하도록 수정
 export const getPosts = async () => {
   let id = CONFIG.notionConfig.pageId as string
   const api = new NotionAPI()
 
   const response = await api.getPage(id)
   id = idToUuid(id)
-  const collection = (Object.values(response.collection)[0] as any)?.value?.value || (Object.values(response.collection)[0] as any)?.value
+  const collection =
+    (Object.values(response.collection)[0] as any)?.value?.value ||
+    (Object.values(response.collection)[0] as any)?.value
   const block = response.block
   const schema = collection?.schema
 
@@ -33,20 +34,48 @@ export const getPosts = async () => {
   ) {
     return []
   } else {
+    // collection_query is empty from getPage() alone — explicitly fetch collection data
+    const collectionId = Object.keys(response.collection || {})[0]
+    const collectionViewId = Object.keys(response.collection_view || {})[0]
+    if (collectionId && collectionViewId) {
+      const colData = await (api as any).getCollectionData(
+        collectionId,
+        collectionViewId,
+        { limit: 999 }
+      )
+      const reducerResults = colData?.result?.reducerResults
+      if (reducerResults) {
+        response.collection_query[collectionId] = reducerResults
+      }
+    }
+
     // Construct Data
     const pageIds = getAllPageIds(response)
+
+    // response.block only contains the root page — fetch each post's block so
+    // getPageProperties can read its properties
+    const fetchedBlocks: any = { ...block }
+    await Promise.all(
+      pageIds.map(async (pageId) => {
+        try {
+          const pageResponse = await api.getPage(pageId)
+          Object.assign(fetchedBlocks, pageResponse.block)
+        } catch {
+          // skip inaccessible pages
+        }
+      })
+    )
+
     const data = []
     for (let i = 0; i < pageIds.length; i++) {
-      const id = pageIds[i]
-      const properties = (await getPageProperties(id, block, schema)) || null
-      // Add fullwidth, createdtime to properties
-      let blockValue = block[id]?.value as any
+      const postId = pageIds[i]
+      const properties =
+        (await getPageProperties(postId, fetchedBlocks, schema)) || null
+      let blockValue = fetchedBlocks[postId]?.value as any
       if (blockValue?.value) {
         blockValue = blockValue.value
       }
-      properties.createdTime = new Date(
-        blockValue?.created_time
-      ).toString()
+      properties.createdTime = new Date(blockValue?.created_time).toString()
       properties.fullWidth =
         (blockValue?.format as any)?.page_full_width ?? false
 
@@ -60,8 +89,10 @@ export const getPosts = async () => {
       return dateB - dateA
     })
 
-    const posts = data as TPosts
-
+    // Sanitize: replace all undefined with null for Next.js JSON serialization
+    const posts = JSON.parse(
+      JSON.stringify(data, (_, v) => (v === undefined ? null : v))
+    ) as TPosts
     return posts
   }
 }
